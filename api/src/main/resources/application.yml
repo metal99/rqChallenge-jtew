@@ -1,2 +1,9 @@
 spring.application.name: employee-api
 server.port: 8111
+
+resilience4j.ratelimiter:
+  instances:
+    rqRateLimiter:
+      limit-for-period: 10
+      limit-refresh-period: 1
+      timeout-duration: 0

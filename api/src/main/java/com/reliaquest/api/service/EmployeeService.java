@@ -9,6 +9,7 @@ import com.reliaquest.api.client.EmployeeServiceClient;
 import com.reliaquest.api.common.EmployeeDeleteRequest;
 import com.reliaquest.api.common.EmployeeRequest;
 import com.reliaquest.api.model.Employee;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,7 @@ public class EmployeeService {
      *
      * @return a {@link com.reliaquest.api.common.Response} containing a list of all employees
      */
+    @RateLimiter(name = "rqRateLimiter")
     public com.reliaquest.api.common.Response<List<Employee>> getAllEmployees() {
         com.reliaquest.api.common.Response<List<Employee>> cachedResult = cache.get(CACHE_KEY);
         if (cachedResult != null) {
@@ -79,9 +80,10 @@ public class EmployeeService {
             return com.reliaquest.api.common.Response.error("No employees found");
         }
         List<Employee> list = Optional.of(getAllEmployees().data().stream()
-                .filter(Objects::nonNull)
-                .filter(employee -> employee.getName().contains(searchString))
-                .toList()).orElse(Collections.emptyList());
+                        .filter(Objects::nonNull)
+                        .filter(employee -> employee.getName().contains(searchString))
+                        .toList())
+                .orElse(Collections.emptyList());
         if (list.isEmpty()) {
             return com.reliaquest.api.common.Response.error("No employees found");
         } else {
@@ -102,6 +104,7 @@ public class EmployeeService {
      * @return a {@link com.reliaquest.api.common.Response} containing the employee data,
      *         or an error response if the employee is not found or an error occurs
      */
+    @RateLimiter(name = "rqRateLimiter")
     public com.reliaquest.api.common.Response<Employee> getEmployeeById(@NonNull final String id) {
         String format = String.format(PATH_ID).replace("{id}", id);
         try (Response response = employeeServiceClient.get(PATH_EMPLOYEE + format)) {
@@ -155,6 +158,7 @@ public class EmployeeService {
      * @param employeeInput the employee data to create
      * @return a {@link com.reliaquest.api.common.Response} containing the newly created employee or an error response
      */
+    @RateLimiter(name = "rqRateLimiter")
     public com.reliaquest.api.common.Response<Employee> createEmployee(Object employeeInput) {
         EmployeeRequest employeeRequest = objectMapper.convertValue(employeeInput, EmployeeRequest.class);
 

@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
     implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '4.12.0'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.7.1'
+    implementation 'io.github.resilience4j:resilience4j-ratelimiter:1.7.1'
 
     compileOnly 'org.projectlombok:lombok'
 

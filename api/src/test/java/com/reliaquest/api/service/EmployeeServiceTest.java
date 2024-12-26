@@ -79,7 +79,6 @@ class EmployeeServiceTest {
         when(responseBodyMock.string()).thenReturn(objectMapper.writeValueAsString(cachedResponse));
         when(responseMock.body()).thenReturn(responseBodyMock);
         when(employeeServiceClientMock.get(PATH_EMPLOYEE)).thenReturn(responseMock);
-
     }
 
     @DisplayName("Get all employees, no results")
@@ -148,7 +147,7 @@ class EmployeeServiceTest {
     @DisplayName("Search by employee name, no results")
     @Test
     void searchByEmployeeName() throws IOException {
-         com.reliaquest.api.common.Response<List<Employee>> expected =
+        com.reliaquest.api.common.Response<List<Employee>> expected =
                 com.reliaquest.api.common.Response.error("No employees found");
 
         com.reliaquest.api.common.Response<List<Employee>> actual = employeeService.searchByEmployeeName("wrong name");
@@ -294,11 +293,12 @@ class EmployeeServiceTest {
     @Test
     void deleteEmployeeFound() throws IOException {
         when(employeeServiceClientMock.get(any())).thenReturn(responseMock);
-        com.reliaquest.api.common.Response<Employee> expected = com.reliaquest.api.common.Response.handledWith(employee);
+        com.reliaquest.api.common.Response<Employee> expected =
+                com.reliaquest.api.common.Response.handledWith(employee);
         when(employeeServiceClientMock.delete(any(), any())).thenReturn(responseMock);
-        //when(responseBodyMock.string()).thenReturn(objectMapper.writeValueAsString(expected));
+        // when(responseBodyMock.string()).thenReturn(objectMapper.writeValueAsString(expected));
         when(responseMock.isSuccessful()).thenReturn(true);
-        //when(responseMock.body()).thenReturn(responseBodyMock);
+        // when(responseMock.body()).thenReturn(responseBodyMock);
 
         com.reliaquest.api.common.Response<Employee> actual = employeeService.deleteEmployeeById(employee.getId());
 
